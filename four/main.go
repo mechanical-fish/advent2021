@@ -87,6 +87,8 @@ func NewCard(caller *Caller, row string) (*Card, error) {
 	return c, nil
 }
 
+// if t is a better winning time than the one we already know,
+// record t as the best winning time
 func (c *Card) setWinTime(t int) {
 	if c.WinTime < len(c.Grid) || t < c.WinTime {
 		c.WinTime = t
@@ -107,7 +109,8 @@ func (c *Card) addRowNums(nums []int) {
 	}
 	c.nextEmptyRow++
 	if c.IsComplete() {
-		// compute the time when this card wins
+		// we know the whole card now, so compute the time when this
+		// card wins
 		for _, t := range c.winTimeForRow {
 			c.setWinTime(t)
 		}
@@ -244,5 +247,4 @@ func main() {
 		winningCard+1, winTime+1, players.Cards[winningCard].Score())
 	fmt.Printf("Card %d will win last, after %d numbers\n with score %d\n",
 		losingestCard+1, latestWinTime+1, players.Cards[losingestCard].Score())
-
 }

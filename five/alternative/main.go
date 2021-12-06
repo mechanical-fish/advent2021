@@ -32,54 +32,35 @@ func ParseLine(s string) *Line {
 	return NewLine(pts[0], pts[1], pts[2], pts[3])
 }
 
-func (n Line) IsHorizontal() bool {
-	return n.Ya == n.Yb
-}
-
-func (n Line) IsVertical() bool {
-	return n.Xa == n.Xb
-}
-
 type Point struct {
 	X int
 	Y int
 }
 
-func (n Line) PointsOn() []Point {
+func (n Line) PointsOn(useDiagonals bool) []Point {
 	result := make([]Point, 0, 2)
-	if n.IsHorizontal() {
-		xS, xL := n.Xa, n.Xb
-		if xS > xL {
-			xS, xL = xL, xS
-		}
-		for x := xS; x <= xL; x++ {
-			result = append(result, Point{x, n.Ya})
-		}
-	} else if n.IsVertical() {
-		yS, yL := n.Ya, n.Yb
-		if yS > yL {
-			yS, yL = yL, yS
-		}
-		for y := yS; y <= yL; y++ {
-			result = append(result, Point{n.Xa, y})
-		}
-	} else {
-		// rearrange the endpoints so the first point is on the left
-		xL, yL, xR, yR := n.Xa, n.Ya, n.Xb, n.Yb
-		if xL > xR {
-			xL, xR, yL, yR = xR, xL, yR, yL
-		}
-		var slope int = 1
-		if yR < yL {
-			slope = -1
-		}
-		y := yL
-		for x := xL; x <= xR; x++ {
-			result = append(result, Point{x, y})
-			y += slope
-		}
+	var dX, dY int = 0, 0
+	if n.Xa < n.Xb {
+		dX = 1
+	} else if n.Xa > n.Xb {
+		dX = -1
 	}
-	return result
+	if n.Ya < n.Yb {
+		dY = 1
+	} else if n.Ya > n.Yb {
+		dY = -1
+	}
+	if !useDiagonals && dX != 0 && dY != 0 {
+		return result
+	}
+	var x int = n.Xa
+	var y int = n.Ya
+	for x != n.Xb || y != n.Yb {
+		result = append(result, Point{x, y})
+		x += dX
+		y += dY
+	}
+	return append(result, Point{n.Xb, n.Yb})
 }
 
 type Plane struct {
@@ -96,8 +77,8 @@ func NewPlane(xSize, ySize int) *Plane {
 	return p
 }
 
-func (p *Plane) AddLine(n *Line) {
-	for _, pt := range n.PointsOn() {
+func (p *Plane) AddLine(n *Line, useDiagonals bool) {
+	for _, pt := range n.PointsOn(useDiagonals) {
 		p.Grid[pt.X][pt.Y] = p.Grid[pt.X][pt.Y] + 1
 	}
 }
@@ -106,7 +87,7 @@ func main() {
 	scanner := bufio.NewScanner(os.Stdin)
 	plane := NewPlane(1000, 1000)
 	for scanner.Scan() {
-		plane.AddLine(ParseLine(scanner.Text()))
+		plane.AddLine(ParseLine(scanner.Text()), true)
 	}
 	overlaps := 0
 	for _, row := range plane.Grid {

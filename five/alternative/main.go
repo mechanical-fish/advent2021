@@ -33,8 +33,7 @@ func ParseLine(s string) *Line {
 }
 
 type Point struct {
-	X int
-	Y int
+	X, Y int
 }
 
 func (n Line) PointsOn(useDiagonals bool) []Point {
@@ -53,8 +52,7 @@ func (n Line) PointsOn(useDiagonals bool) []Point {
 	if !useDiagonals && dX != 0 && dY != 0 {
 		return result
 	}
-	var x int = n.Xa
-	var y int = n.Ya
+	var x, y int = n.Xa, n.Ya
 	for x != n.Xb || y != n.Yb {
 		result = append(result, Point{x, y})
 		x += dX

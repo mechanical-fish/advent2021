@@ -70,8 +70,7 @@ func (n Line) PointsOn() []Point {
 		// rearrange the endpoints so the first point is on the left
 		xL, yL, xR, yR := n.Xa, n.Ya, n.Xb, n.Yb
 		if xL > xR {
-			xL, xR = xR, xL
-			yL, yR = yR, yL
+			xL, xR, yL, yR = xR, xL, yR, yL
 		}
 		var slope int = 1
 		if yR < yL {
@@ -120,5 +119,5 @@ func main() {
 			}
 		}
 	}
-	fmt.Printf("Found %d overlaps", overlaps)
+	fmt.Printf("Found %d overlaps\n", overlaps)
 }

@@ -20,7 +20,7 @@ func printBuckets(buckets []int, t int) {
 }
 
 func main() {
-	buckets := make([]int, 9)
+	inBuckets := make([]int, 9)
 	scanner := bufio.NewScanner(os.Stdin)
 	for scanner.Scan() {
 		for _, n := range strings.Split(scanner.Text(), `,`) {
@@ -28,10 +28,18 @@ func main() {
 			if err != nil {
 				panic(err)
 			}
-			buckets[i]++
+			inBuckets[i]++
 		}
 	}
-	printBuckets(buckets, 0)
+	printBuckets(inBuckets, 0)
+
+	buckets := make([]int, 9)
+	for i, n := range inBuckets {
+		buckets[i] = n
+	}
+
+	// first, a fast but not ultimately-fast algorithm:
+
 	endTime := 256
 	start := time.Now()
 	for t := 1; t <= endTime; t++ {
@@ -45,6 +53,24 @@ func main() {
 		}
 		buckets[6] += births
 	}
+	end := time.Since(start)
 	printBuckets(buckets, endTime)
-	fmt.Printf("Executed in %v", time.Since(start))
+	fmt.Printf("Executed the 'slow' way in %v\n", end)
+
+	// Now the even faster way, with fewer copies --
+	// this has successfully made me miss assembly language programming
+	for i, n := range inBuckets {
+		buckets[i] = n
+	}
+	start = time.Now()
+	// why copy all those buckets? they mostly just cascade, so
+	// just move a cursor which always points to the bucket that is 0 at time t
+	cursor := 0
+	for t := 1; t <= endTime; t++ {
+		buckets[(cursor+7)%9] += buckets[cursor]
+		cursor = (cursor + 1) % 9
+	}
+	end = time.Since(start)
+	printBuckets(buckets, endTime)
+	fmt.Printf("Executed the 'improved' way in %v\n", end)
 }

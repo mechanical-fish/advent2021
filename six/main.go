@@ -6,6 +6,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 )
 
 func printBuckets(buckets []int, t int) {
@@ -31,7 +32,9 @@ func main() {
 		}
 	}
 	printBuckets(buckets, 0)
-	for t := 1; t <= 256; t++ {
+	endTime := 256
+	start := time.Now()
+	for t := 1; t <= endTime; t++ {
 		births := buckets[0]
 		for i := range buckets {
 			if i == 8 {
@@ -41,6 +44,7 @@ func main() {
 			buckets[i] = buckets[i+1]
 		}
 		buckets[6] += births
-		printBuckets(buckets, t)
 	}
+	printBuckets(buckets, endTime)
+	fmt.Printf("Executed in %v", time.Since(start))
 }

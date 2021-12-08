@@ -36,6 +36,9 @@ func main() {
 	start := time.Now()
 
 	sort.Ints(inCrabs)
+	end := time.Since(start)
+	fmt.Printf("Sort time is %v\n", end)
+
 	// Consider the leftmost and rightmost crabs. To bring those two
 	// crabs together at any position between them will cost the same
 	// amount of fuel, because a position 1 unit closer to the right
@@ -51,6 +54,7 @@ func main() {
 	// the optimum. Or, if there is one crab left, its position is the
 	// optimum. In short, the optimum place for crab meetups is the
 	// integer closest to the median position.
+	start = time.Now()
 	answer := inCrabs[len(inCrabs)/2]
 	fuelCost := 0
 	for _, pos := range inCrabs {
@@ -60,7 +64,7 @@ func main() {
 			fuelCost += pos - answer
 		}
 	}
-	end := time.Since(start)
+	end = time.Since(start)
 	fmt.Printf("The optimum location is %d\n", answer)
 	fmt.Printf("The fuel cost is %d\n", fuelCost)
 	fmt.Printf("Executed in %v\n", end)

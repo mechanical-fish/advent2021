@@ -78,17 +78,18 @@ func main() {
 	// then the fuel cost to get a crab at a to point x is (x-a)(x-a+1)/2
 
 	start = time.Now()
-	fuelCosts := make(map[int]int, 5)
+	fuelCosts := make(map[int]int, 3)
 	sum := 0
 	for _, pos := range inCrabs {
 		sum += pos
 	}
 	var mean int = int(math.Round(float64(sum) / float64(len(inCrabs))))
-	for x := mean - 2; x <= mean+2; x++ {
+	// compute a bit around the mean
+	for x := mean - 1; x <= mean+1; x++ {
 		fuelCosts[x] = fuelCostNonlinear(x, inCrabs)
 	}
 	end = time.Since(start)
-	fmt.Printf("The optimum location is around %d\n", mean)
+	fmt.Printf("The optimum location is close to %d\n", mean)
 	for x, c := range fuelCosts {
 		fmt.Printf("The fuel cost at %d is %d\n", x, c)
 	}

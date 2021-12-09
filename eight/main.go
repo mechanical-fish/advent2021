@@ -19,13 +19,13 @@ func signalsToBinary(s string) uint {
 }
 
 type Example struct {
-	// ciphertext for example digits, by length
+	// input ciphertext for example digits, by length
 	L map[int][]uint
 
-	// ciphertext for output digits
+	// input ciphertext for output digits
 	Outputs []uint
 
-	// ciphertext representation of each cleartext digit 0-9
+	// the deduced ciphertext representation of each cleartext digit 0-9
 	Key []uint
 }
 
